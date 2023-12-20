@@ -62,6 +62,44 @@ async function addTask(){
     }
 }
 
+function updateTask(id){
+    ApiRequest({
+        type: "PUT",
+        data: JSON.stringify({
+            id: id,
+        })
+    }).then((result) => {
+        if(result.code == 400){
+            mySweet({
+                title: result?.message || 'error',
+                text: result?.error
+            });
+        }
+        else{
+            loadTask();
+        }
+    });
+}
+
+function deleteTask(id){
+    ApiRequest({
+        type: "DELETE",
+        data: JSON.stringify({
+            id: id,
+        })
+    }).then((result) => {
+        if(result.code == 400){
+            mySweet({
+                title: result?.message || 'error',
+                text: result?.error
+            });
+        }
+        else{
+            loadTask();
+        }
+    });
+}
+
 function ApiRequest(config, loaderId=null){
     const Loader = loaderId || '#task_loader';
     const RequestConfig = {
