@@ -22,11 +22,19 @@ class TaskModel{
     }
 
     function getAllTask(){
-
+        $getTask = $this->db
+                        ->connect()
+                        ->query('SELECT * FROM tasks ORDER BY `priority` DESC, `name` ASC')
+                        ->fetchAll(\PDO::FETCH_ASSOC);
+        return $getTask;
     }
     
     function getCompleteTask(){
-
+        $getTask = $this->db
+                        ->connect()
+                        ->query('SELECT COUNT(id) as total FROM tasks WHERE is_complete = 1')
+                        ->fetch(\PDO::FETCH_ASSOC);
+        return $getTask;
     }
 
     function getTaskByName($name){
@@ -36,8 +44,11 @@ class TaskModel{
                     ->fetch(\PDO::FETCH_ASSOC);
     }
 
-    function getTaskById(){
-
+    function getTaskById($id){
+        return $this->db
+                    ->connect()
+                    ->query('SELECT id FROM tasks WHERE id = "'.$id.'"')
+                    ->fetch(\PDO::FETCH_ASSOC);
     }
 
     function insertTask($data){
@@ -47,8 +58,12 @@ class TaskModel{
         return $execute;
     }
 
-    function deleteTask(){
-
+    function deleteTask($id){
+        $query = 'DELETE FROM tasks WHERE id="'.$id.'"';
+        return $this->db
+                    ->connect()
+                    ->query($query)
+                    ->execute();
     }
 
     function completingTask(){

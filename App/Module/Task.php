@@ -35,23 +35,48 @@ class Task{
 
     function viewTask(){
         try{
+            $tasks = $this->model->getAllTask();
+            $stats = [
+                'total' => count($tasks),
+                'is_complete' => $this->model->getCompleteTask(),
+            ];
+
             return [
                 'code' => 200,
-                'message' => 'viewTask'
+                'message' => 'tasks fetched',
+                'data' => $tasks,
+                'stats' => $stats,
             ];
         }catch(\Exception $err){
-
-        }
+            return [
+                'code' => 400,
+                'message' => 'Bad Request',
+            ];
+        } 
     }
 
     function deleteTask(){
         try{
+            $input = json_decode(file_get_contents('php://input'), true);
+            // check id existence
+            $data = $this->model->getTaskById($input['id']);
+            if(empty($data)){
+                throw new Exception('Id is not exists');
+            }
+
+            $deleting = $this->model->deleteTask($input['id']);
+
             return [
                 'code' => 200,
-                'message' => 'deleteTask'
+                'message' => 'Task successfully deleted',
+                'result' => $deleting,
             ];
         }catch(\Exception $err){
-
+            return [
+                'code' => 400,
+                'message' => 'Bad Request',
+                'error' => $err->getMessage(),
+            ];
         }
     }
 
