@@ -82,12 +82,26 @@ class Task{
 
     function completeTask(){
         try{
+            $input = json_decode(file_get_contents("php://input"), true);
+            // check id existence
+            $data = $this->model->getTaskById($input['id']);
+            if(empty($data)){
+                throw new Exception('Id is not exists');
+            }
+
+            $completion = $this->model->completingTask($input['id']);
+
             return [
                 'code' => 200,
-                'message' => 'completeTask'
+                'message' => 'Task successfully updated',
+                'result' => $completion,
             ];
         }catch(\Exception $err){
-
+            return [
+                'code' => 400,
+                'message' => 'Bad Request',
+                'error' => $err->getMessage(),
+            ];
         }
     }
 }

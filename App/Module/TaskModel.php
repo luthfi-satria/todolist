@@ -66,7 +66,10 @@ class TaskModel{
                     ->execute();
     }
 
-    function completingTask(){
-
+    function completingTask($id){
+        return $this->db
+                    ->connect()
+                    ->query('UPDATE tasks SET is_complete = 1 WHERE id ="'.$id.'"')
+                    ->execute();
     }
 }
