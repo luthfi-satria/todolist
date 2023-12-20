@@ -1,6 +1,8 @@
 <?php
 namespace App\Module;
 
+use Exception;
+
 class Task{
     var $model;
     function __construct()
@@ -10,12 +12,24 @@ class Task{
 
     function addTask(){
         try{
+            $data = json_decode(file_get_contents("php://input"), true);
+            // Check the task is exists or not
+            $checking = $this->model->getTaskByName($data['name']);
+            if(empty($checking)){
+                $execute = $this->model->insertTask($data);
+                return [
+                    'code' => 200,
+                    'message' => 'Insert Successfully',
+                    'result' => $execute,
+                ];
+            }
+            throw new Exception('Tasks name already exists');
+        }catch(Exception $err){
             return [
-                'code' => 200,
-                'message' => 'addTask'
+                'code' => 400,
+                'message' => 'Bad Request',
+                'error' => $err->getMessage(),
             ];
-        }catch(\Exception $err){
-
         }
     }
 

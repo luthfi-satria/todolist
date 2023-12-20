@@ -29,16 +29,22 @@ class TaskModel{
 
     }
 
-    function getTaskByName(){
-
+    function getTaskByName($name){
+        return $this->db
+                    ->connect()
+                    ->query('SELECT name FROM tasks WHERE name = "'.$name.'" LIMIT 1')
+                    ->fetch(\PDO::FETCH_ASSOC);
     }
 
     function getTaskById(){
 
     }
 
-    function insertTask(){
-
+    function insertTask($data){
+        $query = 'INSERT INTO tasks(priority, name) VALUES("%d","%s")';
+        $statement = sprintf($query, $data['priority'], $data['name']);
+        $execute = $this->db->connect()->exec($statement);
+        return $execute;
     }
 
     function deleteTask(){
