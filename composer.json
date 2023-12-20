@@ -1,0 +1,16 @@
+{
+    "name": "app/todolist",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luthfi Satria",
+            "email": "luthfi.uika@gmail.com"
+        }
+    ],
+    "require": {}
+}
