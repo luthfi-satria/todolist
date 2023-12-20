@@ -1,3 +1,7 @@
+const btnAdd = document.getElementById('btnAdd');
+
+btnAdd.addEventListener('click', addTask);
+
 window.addEventListener('load', loadTask);
 
 function loadTask(){
@@ -8,6 +12,54 @@ function loadTask(){
         document.getElementById('total_count').innerHTML = result?.stats?.total;
         document.getElementById('complete_count').innerHTML = result?.stats?.is_complete?.total;
     })
+}
+
+async function addTask(){
+    const {value: formValues} = await mySweet({
+        title: 'Add Task',
+        text: 'please input the field',
+        html: `
+            <div class="field">
+                <label>Task Name</label>
+                <input id="inp_name" type="text" name="name" class="input" placeholder="task name..." autocomplete="off"/>
+            </div>
+            <div class="field">
+                <label>Priority</label>
+                <select id="inp_priority" class="input">
+                    <option value="1">Normal</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Critical</option>
+                </select>
+            </div>
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+            return [
+                document.getElementById('inp_name').value,
+                document.getElementById('inp_priority').value,
+            ];
+        }
+    });
+
+    if(formValues){
+        ApiRequest({
+            type: 'POST',
+            data: JSON.stringify({
+                name: formValues[0],
+                priority: formValues[1],
+            }),
+        }).done((result) => {
+            if(result.code == 400){
+                mySweet({
+                    title: result?.message || 'error',
+                    text: result?.error
+                });
+            }
+            else{
+                loadTask();
+            }
+        });
+    }
 }
 
 function ApiRequest(config, loaderId=null){
@@ -37,6 +89,17 @@ function ApiRequest(config, loaderId=null){
                 $(Loader).addClass('hidden');
             }, 2000);
         });
+}
+
+function mySweet(config){
+    const init = {
+        title: 'title',
+        text: 'message',
+        showCloseButton: true,
+        ...config
+    };
+
+    return Swal.fire(init);
 }
 
 function fetchList(data){
